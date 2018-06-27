@@ -4,7 +4,7 @@ import random
 class Generator():
     def __init__(self, parametry):
         self.parametry = parametry
-        self.pozostaw = 0.5
+        self.pozostaw = 0.6
         self.szansa_pozostania = 0.05
         self.szansa_mutacji = 0.3
 

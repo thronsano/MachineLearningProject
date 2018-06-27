@@ -1,18 +1,22 @@
 import random
-
+import numpy as np
 from keras_applications.vgg16 import VGG16
 from keras.layers import Dense, Activation, Flatten
 from keras.layers import merge, Input
 from keras.models import Model
+from sklearn.metrics import confusion_matrix
 
 class Siec():
     def __init__(self, parametry):
         self.parametry = parametry
         self.wybrane_parametry = {}
         self.celnosc = 0
+        self.strata = 0
+        self.histogram = {}
         self.batch_size = 16
-        self.epochs = 2
+        self.epochs = 5
         self.verbose = 0
+        self.confusion_matrixx = []
 
     def wygeneruj(self):
         for klucz in self.parametry:
@@ -52,9 +56,15 @@ class Siec():
 
         # ewaluacja
         (loss, accuracy) = nowy_model_vgg.evaluate(x_test, y_test, batch_size=self.batch_size, verbose=self.verbose)
+        y_pred = nowy_model_vgg.predict(x_test, batch_size=self.batch_size)
 
+        self.confusion_matrixx = confusion_matrix(y_test.argmax(axis=-1), y_pred.argmax(axis=-1))
+        self.histogram = histogram
+        self.strata = loss
         self.celnosc = accuracy
 
     def ustaw_parametry(self, parametry):
         self.wybrane_parametry = parametry
 
+    def opisz(self):
+        print("Celnosc:\t{:.4f}%".format(self.celnosc * 100), "\nStrata:\t\t{:.4f}".format(self.strata), "\nNeurony:\t", self.wybrane_parametry['neurony'], "\nAktywacja:\t", self.wybrane_parametry['aktywacja'], "\nIlosc warstw:\t", self.wybrane_parametry['il_warstw'], "\nConfusion matrix:\n", self.confusion_matrixx)
